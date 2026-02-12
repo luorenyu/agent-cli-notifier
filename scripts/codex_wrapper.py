@@ -27,7 +27,7 @@ PATTERNS = {
     r"(?i)(task complete|execution finished|done\.|completed successfully)": "Stop",
     # Match bullet point • which may be preceded by ANSI color codes, newlines, or start of string
     # But EXCLUDE if followed by common tool action verbs (Running, Reading, etc.) or status updates (Edited, Updated, etc.)
-    r"(?:(?:\x1b\[[0-9;]*m)+|^|\n)\s*•\s+(?!(?:Running|Reading|Writing|Editing|Creating|Updating|Deleting|Listing|Searching|Edited|Created|Updated|Deleted|Renamed|Moved)\b)": "Stop"
+    r"(?:(?:\x1b\[[0-9;]*m)+|^|\n)\s*•\s+(?!(?:Running|Reading|Writing|Editing|Creating|Updating|Deleting|Listing|Searching|Working|Edited|Created|Updated|Deleted|Renamed|Moved|Ran|Added|\w+ing)\b)": "Stop"
 }
 
 def get_terminal_size(fd):
