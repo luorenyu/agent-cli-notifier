@@ -1,6 +1,6 @@
 # Multi-Platform Code Notifier 🔔
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/claude-code-notifier)
 
 **不错过任何一次确认，不浪费每一秒等待。**
@@ -362,7 +362,10 @@ PATTERNS = {
 
 3. **事件触发**:
    - 检测到匹配模式时调用 `notify.sh`
-   - 使用防抖机制避免重复通知（3秒内相同事件只触发一次）
+   - **智能延迟机制**：
+     - 权限请求 (PermissionRequest): 立即发送通知
+     - 任务完成 (Stop): 等待 CLI 空闲 3 秒后发送，避免在连续输出时重复通知
+     - 每次有新输出时自动重置空闲计时器，确保只在真正空闲时触发
 
 4. **终端兼容性**:
    - 完整支持终端调整大小 (SIGWINCH)
@@ -388,3 +391,20 @@ PATTERNS = {
 ## License
 
 MIT
+
+## 📝 更新日志
+
+### v1.2.0 (2025-02-14)
+- **改进**: 优化 Codex 通知延迟机制
+  - Stop 通知现在等待 CLI 真正空闲 3 秒后才发送
+  - 每次有新输出时自动重置空闲计时器
+  - 避免在连续输出时触发重复的任务完成通知
+  - 权限请求通知仍然保持立即发送
+
+### v1.1.0
+- 增加通知过滤功能
+- 支持 Google Gemini CLI 通知
+
+### v1.0.0
+- 初始版本
+- 支持 Claude Code 和 OpenAI Codex 通知

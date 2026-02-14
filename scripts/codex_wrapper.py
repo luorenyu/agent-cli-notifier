@@ -20,6 +20,7 @@ NOTIFY_SCRIPT = os.path.expanduser("~/.claude/scripts/notify.sh")
 # Global state for notification timer management
 notification_timer = None
 notification_lock = threading.Lock()
+pending_stop_notification = False  # 标记是否有待发送的 Stop 通知
 
 # Regex patterns to match in screen output
 PATTERNS = {
@@ -45,59 +46,85 @@ def set_terminal_size(fd, size):
     except Exception:
         pass
 
-def send_notification_delayed(event_type, delay=0):
-    """
-    延迟发送通知，支持自动重置计时器
+def send_notification_immediately(event_type):
+    """立即发送通知（用于 PermissionRequest）"""
+    if os.path.exists(NOTIFY_SCRIPT):
+        env = os.environ.copy()
+        env["CLAUDE_TOOL_NAME"] = event_type
+        subprocess.Popen([NOTIFY_SCRIPT], env=env)
 
-    Args:
-        event_type: "PermissionRequest" 或 "Stop"
-        delay: 延迟秒数（0 = 立即，3 = 等待空闲）
+def schedule_stop_notification():
     """
-    global notification_timer, notification_lock
+    标记需要发送 Stop 通知，并启动/重置空闲计时器
+    只有在 CLI 真正空闲3秒后才会发送通知
+    """
+    global notification_timer, notification_lock, pending_stop_notification
 
     with notification_lock:
-        # 1. 取消旧的计时器（如果存在）
+        pending_stop_notification = True
+
+        # 取消旧的计时器（如果存在）
         if notification_timer is not None:
             notification_timer.cancel()
 
-        # 2. 定义实际发送通知的函数
-        def _do_send():
-            if os.path.exists(NOTIFY_SCRIPT):
-                env = os.environ.copy()
-                env["CLAUDE_TOOL_NAME"] = event_type
-                subprocess.Popen([NOTIFY_SCRIPT], env=env)
+        # 定义空闲后发送通知的函数
+        def _on_idle():
+            global pending_stop_notification
+            with notification_lock:
+                if pending_stop_notification:
+                    send_notification_immediately("Stop")
+                    pending_stop_notification = False
+                    notification_timer = None
 
-        # 3. 根据延迟时间创建计时器
-        if delay == 0:
-            # 立即发送（PermissionRequest）
-            _do_send()
-            notification_timer = None
-        else:
-            # 延迟发送（Stop），在后台线程等待
-            notification_timer = threading.Timer(delay, _do_send)
+        # 创建3秒空闲计时器
+        notification_timer = threading.Timer(3.0, _on_idle)
+        notification_timer.start()
+
+def reset_idle_timer():
+    """
+    重置空闲计时器（每次有新输出时调用）
+    如果有待发送的 Stop 通知，重新开始3秒倒计时
+    """
+    global notification_timer, notification_lock, pending_stop_notification
+
+    with notification_lock:
+        if pending_stop_notification and notification_timer is not None:
+            notification_timer.cancel()
+            # 重新定义空闲后发送通知的函数
+            def _on_idle():
+                global pending_stop_notification
+                with notification_lock:
+                    if pending_stop_notification:
+                        send_notification_immediately("Stop")
+                        pending_stop_notification = False
+                        notification_timer = None
+
+            notification_timer = threading.Timer(3.0, _on_idle)
             notification_timer.start()
 
 def analyze_output(data):
-    """分析输出并触发通知（带智能延迟）"""
+    """分析输出并触发通知"""
     try:
         text = data.decode('utf-8', errors='ignore')
         for pattern, event_type in PATTERNS.items():
             if re.search(pattern, text):
-                # 根据事件类型设置延迟
                 if event_type == "PermissionRequest":
-                    send_notification_delayed(event_type, delay=0)  # 立即
+                    # 权限请求立即通知
+                    send_notification_immediately(event_type)
                 elif event_type == "Stop":
-                    send_notification_delayed(event_type, delay=3.0)  # 3秒空闲
+                    # Stop 通知需要等待空闲
+                    schedule_stop_notification()
     except Exception:
         pass
 
 def cleanup_timers():
     """清理所有未完成的计时器（退出时调用）"""
-    global notification_timer, notification_lock
+    global notification_timer, notification_lock, pending_stop_notification
     with notification_lock:
         if notification_timer is not None:
             notification_timer.cancel()
             notification_timer = None
+        pending_stop_notification = False
 
 def robust_spawn(argv):
     """
@@ -154,7 +181,10 @@ def robust_spawn(argv):
                     # 1. Write to screen immediately
                     os.write(sys.stdout.fileno(), data)
 
-                    # 2. Analyze for notifications (non-blocking)
+                    # 2. Reset idle timer (any output means CLI is still active)
+                    reset_idle_timer()
+
+                    # 3. Analyze for notifications (non-blocking)
                     analyze_output(data)
 
         except OSError:
