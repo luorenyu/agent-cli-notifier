@@ -1,6 +1,6 @@
 # Multi-Platform Code Notifier 🔔
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
+[![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/claude-code-notifier)
 
 **不错过任何一次确认，不浪费每一秒等待。**
@@ -393,6 +393,11 @@ PATTERNS = {
 MIT
 
 ## 📝 更新日志
+
+### v1.2.1 (2026-02-25)
+- **修复**: Codex 通知冲突问题
+  - 当出现待确认通知 (PermissionRequest) 时，立即取消已排队的成功通知 (Stop)
+  - 避免“待确认提醒”和“执行成功提醒”连续同时弹出
 
 ### v1.2.0 (2025-02-14)
 - **改进**: 优化 Codex 通知延迟机制

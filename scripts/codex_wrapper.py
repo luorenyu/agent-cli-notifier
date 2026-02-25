@@ -102,18 +102,39 @@ def reset_idle_timer():
             notification_timer = threading.Timer(3.0, _on_idle)
             notification_timer.start()
 
+def cancel_pending_stop_notification():
+    """取消所有待发送的 Stop 通知（用于 PermissionRequest 抢占）"""
+    global notification_timer, notification_lock, pending_stop_notification
+
+    with notification_lock:
+        if notification_timer is not None:
+            notification_timer.cancel()
+            notification_timer = None
+        pending_stop_notification = False
+
 def analyze_output(data):
     """分析输出并触发通知"""
     try:
         text = data.decode('utf-8', errors='ignore')
-        for pattern, event_type in PATTERNS.items():
-            if re.search(pattern, text):
-                if event_type == "PermissionRequest":
-                    # 权限请求立即通知
-                    send_notification_immediately(event_type)
-                elif event_type == "Stop":
-                    # Stop 通知需要等待空闲
-                    schedule_stop_notification()
+        permission_matched = any(
+            re.search(pattern, text)
+            for pattern, event_type in PATTERNS.items()
+            if event_type == "PermissionRequest"
+        )
+        if permission_matched:
+            # 权限请求优先：取消所有待发送的 Stop，再立即通知
+            cancel_pending_stop_notification()
+            send_notification_immediately("PermissionRequest")
+            return
+
+        stop_matched = any(
+            re.search(pattern, text)
+            for pattern, event_type in PATTERNS.items()
+            if event_type == "Stop"
+        )
+        if stop_matched:
+            # Stop 通知需要等待空闲
+            schedule_stop_notification()
     except Exception:
         pass
 
