@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Claude Code Notifier
+# Agent CLI Notifier
 # 功能：桌面通知 + 长提示音 + 自动跳转终端 + 显示工作信息
 # 兼容性：支持 terminal-notifier (推荐) 和原生 macOS 通知
 

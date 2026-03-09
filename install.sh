@@ -8,7 +8,92 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-printf "${BLUE}=== Claude Code Notifier 安装脚本 ===${NC}\n"
+INSTALL_CLAUDE=false
+INSTALL_CODEX=false
+INSTALL_GEMINI=false
+AUTO_CONFIRM=false
+NON_INTERACTIVE=false
+TARGETS_CSV=""
+
+function print_help() {
+    cat <<'EOF'
+Agent CLI Notifier 安装脚本
+
+用法:
+  ./install.sh
+  ./install.sh --targets claude,codex --yes
+  ./install.sh --targets gemini --auto
+
+参数:
+  --targets <list>  要安装的平台，逗号分隔: claude,codex,gemini
+  --yes, --auto     非交互模式，跳过安装确认和 Codex alias 提示
+  -h, --help        显示帮助
+EOF
+}
+
+function set_targets_from_csv() {
+    local csv="$1"
+    local normalized="${csv,,}"
+    IFS=',' read -r -a targets <<< "$normalized"
+
+    INSTALL_CLAUDE=false
+    INSTALL_CODEX=false
+    INSTALL_GEMINI=false
+
+    for target in "${targets[@]}"; do
+        case "${target// /}" in
+            claude)
+                INSTALL_CLAUDE=true
+                ;;
+            codex)
+                INSTALL_CODEX=true
+                ;;
+            gemini)
+                INSTALL_GEMINI=true
+                ;;
+            "")
+                ;;
+            *)
+                echo "错误: 不支持的平台 '$target'"
+                exit 1
+                ;;
+        esac
+    done
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --targets)
+            if [[ -z "$2" || "$2" == --* ]]; then
+                echo "错误: --targets 需要一个逗号分隔的值。"
+                exit 1
+            fi
+            TARGETS_CSV="$2"
+            NON_INTERACTIVE=true
+            shift 2
+            ;;
+        --yes|--auto)
+            AUTO_CONFIRM=true
+            NON_INTERACTIVE=true
+            shift
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            echo "错误: 未知参数 '$1'"
+            print_help
+            exit 1
+            ;;
+    esac
+done
+
+if [[ -n "$TARGETS_CSV" ]]; then
+    set_targets_from_csv "$TARGETS_CSV"
+fi
+
+printf "${BLUE}=== Agent CLI Notifier 安装脚本 ===${NC}\n"
 
 # 0. 交互式菜单函数
 function show_menu() {
@@ -85,8 +170,13 @@ function show_menu() {
 }
 
 # 执行菜单
-OPTIONS_LIST=("Claude Code" "OpenAI Codex" "Google Gemini CLI")
-show_menu "请选择要安装的组件:" "${OPTIONS_LIST[@]}"
+if [[ "$NON_INTERACTIVE" != "true" ]]; then
+    OPTIONS_LIST=("Claude Code" "OpenAI Codex" "Google Gemini CLI")
+    show_menu "请选择要安装的组件:" "${OPTIONS_LIST[@]}"
+elif [[ "$INSTALL_CLAUDE" == "false" && "$INSTALL_CODEX" == "false" && "$INSTALL_GEMINI" == "false" ]]; then
+    echo "错误: 非交互模式下必须通过 --targets 指定至少一个组件。"
+    exit 1
+fi
 
 if [[ "$INSTALL_CLAUDE" == "false" && "$INSTALL_CODEX" == "false" && "$INSTALL_GEMINI" == "false" ]]; then
     echo "未选择任何组件，退出安装。"
@@ -411,7 +501,13 @@ EOF
 
     if [[ -n "$SHELL_CONFIG" && -f "$SHELL_CONFIG" ]]; then
         echo "检测到 Shell 配置文件: $SHELL_CONFIG"
-        read -p "是否自动添加 alias 到配置文件? [y/N]: " confirm
+        confirm="n"
+        if [[ "$AUTO_CONFIRM" == "true" ]]; then
+            confirm="y"
+            printf "${BLUE}非交互模式: 自动写入 Codex alias 到 $SHELL_CONFIG${NC}\n"
+        else
+            read -p "是否自动添加 alias 到配置文件? [y/N]: " confirm
+        fi
 
         if [[ "$confirm" =~ ^[Yy]$ ]]; then
             if grep -q "alias codex=" "$SHELL_CONFIG"; then
@@ -419,7 +515,7 @@ EOF
                 echo "请手动检查并确保其指向: $SHIM_DEST"
             else
                 echo "" >> "$SHELL_CONFIG"
-                echo "# Claude Code Notifier - Codex Wrapper" >> "$SHELL_CONFIG"
+                echo "# Agent CLI Notifier - Codex Wrapper" >> "$SHELL_CONFIG"
                 echo "$ALIAS_CMD" >> "$SHELL_CONFIG"
                 printf "${GREEN}✓ 已成功添加 alias 到 $SHELL_CONFIG${NC}\n"
 
@@ -615,7 +711,7 @@ if [[ "$INSTALL_GEMINI" == "true" ]]; then
 fi
 
 # 最终消息
-printf "${BLUE}=== 安装成功 ===${NC}\n"
+printf "${BLUE}=== Agent CLI Notifier 安装成功 ===${NC}\n"
 if [[ "$INSTALL_CLAUDE" == "true" ]]; then
     echo -e "Claude Code: 安装于 ~/.claude/scripts"
 fi

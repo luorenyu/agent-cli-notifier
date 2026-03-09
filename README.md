@@ -1,11 +1,15 @@
-# Multi-Platform Code Notifier 🔔
+# Agent CLI Notifier 🔔
 
-[![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/claude-code-notifier)
+[![Version](https://img.shields.io/badge/version-1.3.0--alpha.0-blue.svg)](https://github.com/luorenyu/agent-cli-notifier/releases)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/agent-cli-notifier)
 
 **不错过任何一次确认，不浪费每一秒等待。**
 
-为 **Claude Code** (Anthropic CLI)、**Google Gemini CLI** 和 **OpenAI Codex** CLI 添加原生系统通知、声音提示和自动终端激活功能。
+`agent-cli-notifier` 是一个面向多种 agent CLI 的系统通知工具。
+
+它为 **Claude Code**、**Google Gemini CLI** 和 **OpenAI Codex** CLI 添加原生系统通知、声音提示和自动终端激活功能。
+
+> Formerly `claude-code-notifier`
 
 ![Demo](assets/demo.png)
 
@@ -61,15 +65,29 @@ Gemini CLI 事件 → settings.json hooks → gemini_bridge.sh → notify.sh →
 
 ## 📦 安装
 
-### 一键安装
+### 推荐安装
 
-下载本项目并运行安装脚本：
+首选 `npx`：
 
 ```bash
-git clone https://github.com/luorenyu/claude-code-notifier.git
-cd claude-code-notifier
-chmod +x install.sh
+npx agent-cli-notifier init --auto
+```
+
+这会自动检测当前机器上已安装的 Claude Code、Codex、Gemini，并以非交互方式完成安装。
+
+### 手动指定平台
+
+```bash
+npx agent-cli-notifier init --targets claude,codex
+```
+
+### 本地仓库安装
+
+如果你是从源码运行，仍然可以使用安装脚本：
+
+```bash
 ./install.sh
+./install.sh --targets claude,codex --yes
 ```
 
 ### 平台选择
@@ -209,10 +227,17 @@ echo "• task complete"
 
 ## 🗑️ 卸载
 
-运行卸载脚本会自动检测已安装的平台并清理：
+推荐通过 CLI 卸载：
+
+```bash
+npx agent-cli-notifier uninstall --targets claude,codex --yes
+```
+
+从源码运行时，也可以直接使用卸载脚本：
 
 ```bash
 ./uninstall.sh
+./uninstall.sh --targets gemini --yes
 ```
 
 卸载脚本会：

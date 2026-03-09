@@ -1,0 +1,34 @@
+{
+  "name": "agent-cli-notifier",
+  "version": "1.3.0-alpha.0",
+  "description": "System notifications for Claude Code, OpenAI Codex, and Google Gemini CLI.",
+  "bin": {
+    "agent-notifier": "./bin/agent-notifier"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "scripts",
+    "assets",
+    "install.sh",
+    "uninstall.sh",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "agent",
+    "cli",
+    "notifier",
+    "claude",
+    "codex",
+    "gemini"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "status": "node ./bin/agent-notifier status",
+    "doctor": "node ./bin/agent-notifier doctor"
+  }
+}

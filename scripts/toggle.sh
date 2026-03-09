@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Claude Code Notifier Toggle Tool
+# Agent CLI Notifier Toggle Tool
 # 功能：用于通过 Slash Command (/notifier) 切换通知开关
 # 用法：/notifier [on|off|status]
 

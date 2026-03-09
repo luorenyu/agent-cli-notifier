@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Bridge script for Gemini CLI to Claude Code Notifier
+# Bridge script for Gemini CLI to Agent CLI Notifier
 # Used to adapt Gemini hook events to the environment variables expected by notify.sh
 
 # Get the directory of this script
