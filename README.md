@@ -70,7 +70,7 @@ Gemini CLI 事件 → settings.json hooks → gemini_bridge.sh → notify.sh →
 首选 `npx`：
 
 ```bash
-npx agent-cli-notifier init --auto
+npx @ronnyluo/agent-cli-notifier init --auto
 ```
 
 这会自动检测当前机器上已安装的 Claude Code、Codex、Gemini，并以非交互方式完成安装。
@@ -78,28 +78,36 @@ npx agent-cli-notifier init --auto
 安装后可检查版本：
 
 ```bash
-npx agent-cli-notifier --version
+npx @ronnyluo/agent-cli-notifier --version
 ```
 
 ### 当前发布状态
 
-- `npx agent-cli-notifier ...` 是主安装入口
-- `brew` 发行还未上线，建议先使用 `npx`
+- `npx @ronnyluo/agent-cli-notifier ...` 是主安装入口
+- `brew` tap 已上线
 - GitHub 仓库已统一迁移到 `agent-cli-notifier`
 
 ### 手动指定平台
 
 ```bash
-npx agent-cli-notifier init --targets claude,codex
+npx @ronnyluo/agent-cli-notifier init --targets claude,codex
 ```
 
 ### 常用命令
 
 ```bash
-npx agent-cli-notifier init --auto
-npx agent-cli-notifier status
-npx agent-cli-notifier doctor
-npx agent-cli-notifier uninstall --targets claude --yes
+npx @ronnyluo/agent-cli-notifier init --auto
+npx @ronnyluo/agent-cli-notifier status
+npx @ronnyluo/agent-cli-notifier doctor
+npx @ronnyluo/agent-cli-notifier uninstall --targets claude --yes
+```
+
+### Homebrew 安装
+
+```bash
+brew tap luorenyu/tap
+brew install agent-notifier
+agent-notifier init --auto
 ```
 
 ### 本地仓库安装
@@ -259,7 +267,7 @@ echo "• task complete"
 推荐通过 CLI 卸载：
 
 ```bash
-npx agent-cli-notifier uninstall --targets claude,codex --yes
+npx @ronnyluo/agent-cli-notifier uninstall --targets claude,codex --yes
 ```
 
 从源码运行时，也可以直接使用卸载脚本：
@@ -284,15 +292,15 @@ source ~/.zshrc  # 或 ~/.bashrc
 
 当前仓库已经具备 npm 发布骨架：
 
-- `package.json` 定义了 `agent-cli-notifier`
+- `package.json` 定义了 `@ronnyluo/agent-cli-notifier`
 - `agent-notifier` 是实际 CLI 命令
+- `luorenyu/tap` 已提供 Homebrew formula: `agent-notifier`
 - `.github/workflows/ci-release.yml` 会在 `main` 上做验证，并在推送 `v*` tag 时执行 `npm publish`
 
 发布前需要完成：
 
-1. 将 GitHub 仓库正式改名为 `agent-cli-notifier`
-2. 在 GitHub 仓库 Secrets 中配置 `NPM_TOKEN`
-3. 确保 npm 上的包名 `agent-cli-notifier` 可用
+1. 在 GitHub 仓库 Secrets 中配置 `NPM_TOKEN`
+2. 确保 npm scope `@ronnyluo` 可用于公开发布
 
 发布方式：
 
