@@ -1,7 +1,7 @@
 # Agent CLI Notifier 🔔
 
-[![Version](https://img.shields.io/badge/version-1.3.0--alpha.0-blue.svg)](https://github.com/luorenyu/agent-cli-notifier/releases)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/agent-cli-notifier)
+[![Version](https://img.shields.io/badge/version-1.3.0--alpha.0-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/claude-code-notifier)
 
 **不错过任何一次确认，不浪费每一秒等待。**
 
@@ -81,10 +81,25 @@ npx agent-cli-notifier init --auto
 npx agent-cli-notifier --version
 ```
 
+### 当前发布状态
+
+- `npx agent-cli-notifier ...` 是主安装入口
+- `brew` 发行还未上线，建议先使用 `npx`
+- 仓库目前仍在 `claude-code-notifier` 地址下，后续会统一迁移到 `agent-cli-notifier`
+
 ### 手动指定平台
 
 ```bash
 npx agent-cli-notifier init --targets claude,codex
+```
+
+### 常用命令
+
+```bash
+npx agent-cli-notifier init --auto
+npx agent-cli-notifier status
+npx agent-cli-notifier doctor
+npx agent-cli-notifier uninstall --targets claude --yes
 ```
 
 ### 本地仓库安装
@@ -144,6 +159,14 @@ npx agent-cli-notifier init --targets claude,codex
 - 需要配置 Shell Alias 使 Wrapper 生效
 
 ## 🎮 使用方法
+
+### 通用命令
+
+- `agent-notifier init --auto`: 自动检测并安装可用平台
+- `agent-notifier init --targets claude,codex`: 只安装指定平台
+- `agent-notifier status`: 查看安装状态
+- `agent-notifier doctor`: 检查 hooks、alias 和安装完整性
+- `agent-notifier uninstall --targets gemini --yes`: 非交互卸载指定平台
 
 ### Claude Code
 
@@ -257,7 +280,7 @@ npx agent-cli-notifier uninstall --targets claude,codex --yes
 source ~/.zshrc  # 或 ~/.bashrc
 ```
 
-## 🚀 发布
+## 🚀 维护者发布
 
 当前仓库已经具备 npm 发布骨架：
 
