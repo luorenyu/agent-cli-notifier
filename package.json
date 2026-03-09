@@ -14,7 +14,7 @@
     "access": "public"
   },
   "bin": {
-    "agent-notifier": "./bin/agent-notifier"
+    "agent-notifier": "bin/agent-notifier"
   },
   "files": [
     "bin",
