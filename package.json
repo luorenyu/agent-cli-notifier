@@ -2,6 +2,14 @@
   "name": "agent-cli-notifier",
   "version": "1.3.0-alpha.0",
   "description": "System notifications for Claude Code, OpenAI Codex, and Google Gemini CLI.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luorenyu/agent-cli-notifier.git"
+  },
+  "homepage": "https://github.com/luorenyu/agent-cli-notifier",
+  "bugs": {
+    "url": "https://github.com/luorenyu/agent-cli-notifier/issues"
+  },
   "bin": {
     "agent-notifier": "./bin/agent-notifier"
   },
@@ -29,6 +37,9 @@
   },
   "scripts": {
     "status": "node ./bin/agent-notifier status",
-    "doctor": "node ./bin/agent-notifier doctor"
+    "doctor": "node ./bin/agent-notifier doctor",
+    "validate": "bash -n install.sh && bash -n uninstall.sh && node -e \"require('./lib/cli'); require('./lib/status'); require('./lib/doctor'); require('./lib/targets');\"",
+    "pack:dry": "npm_config_cache=${TMPDIR:-/tmp}/agent-cli-notifier-npm-cache npm pack --dry-run",
+    "prepublishOnly": "npm run validate && npm run pack:dry"
   }
 }

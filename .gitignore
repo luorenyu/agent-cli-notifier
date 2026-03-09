@@ -16,3 +16,6 @@
 # Temp
 tmp/
 temp/
+
+# Packaged artifacts
+*.tgz

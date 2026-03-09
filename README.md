@@ -75,6 +75,12 @@ npx agent-cli-notifier init --auto
 
 这会自动检测当前机器上已安装的 Claude Code、Codex、Gemini，并以非交互方式完成安装。
 
+安装后可检查版本：
+
+```bash
+npx agent-cli-notifier --version
+```
+
 ### 手动指定平台
 
 ```bash
@@ -250,6 +256,29 @@ npx agent-cli-notifier uninstall --targets claude,codex --yes
 ```bash
 source ~/.zshrc  # 或 ~/.bashrc
 ```
+
+## 🚀 发布
+
+当前仓库已经具备 npm 发布骨架：
+
+- `package.json` 定义了 `agent-cli-notifier`
+- `agent-notifier` 是实际 CLI 命令
+- `.github/workflows/ci-release.yml` 会在 `main` 上做验证，并在推送 `v*` tag 时执行 `npm publish`
+
+发布前需要完成：
+
+1. 将 GitHub 仓库正式改名为 `agent-cli-notifier`
+2. 在 GitHub 仓库 Secrets 中配置 `NPM_TOKEN`
+3. 确保 npm 上的包名 `agent-cli-notifier` 可用
+
+发布方式：
+
+```bash
+git tag v1.3.0-alpha.0
+git push origin v1.3.0-alpha.0
+```
+
+GitHub Actions 会先跑校验，再自动发布到 npm。
 
 ## 🔧 故障排除
 
