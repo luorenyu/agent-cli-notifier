@@ -1,7 +1,7 @@
 # Agent CLI Notifier 🔔
 
-[![Version](https://img.shields.io/badge/version-1.3.0--alpha.0-blue.svg)](https://github.com/luorenyu/claude-code-notifier/releases)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/claude-code-notifier)
+[![Version](https://img.shields.io/badge/version-1.3.0--alpha.0-blue.svg)](https://github.com/luorenyu/agent-cli-notifier/releases)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/luorenyu/agent-cli-notifier)
 
 **不错过任何一次确认，不浪费每一秒等待。**
 
@@ -85,7 +85,7 @@ npx agent-cli-notifier --version
 
 - `npx agent-cli-notifier ...` 是主安装入口
 - `brew` 发行还未上线，建议先使用 `npx`
-- 仓库目前仍在 `claude-code-notifier` 地址下，后续会统一迁移到 `agent-cli-notifier`
+- GitHub 仓库已统一迁移到 `agent-cli-notifier`
 
 ### 手动指定平台
 

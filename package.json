@@ -4,11 +4,11 @@
   "description": "System notifications for Claude Code, OpenAI Codex, and Google Gemini CLI.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/luorenyu/claude-code-notifier.git"
+    "url": "https://github.com/luorenyu/agent-cli-notifier.git"
   },
-  "homepage": "https://github.com/luorenyu/claude-code-notifier",
+  "homepage": "https://github.com/luorenyu/agent-cli-notifier",
   "bugs": {
-    "url": "https://github.com/luorenyu/claude-code-notifier/issues"
+    "url": "https://github.com/luorenyu/agent-cli-notifier/issues"
   },
   "publishConfig": {
     "access": "public"
